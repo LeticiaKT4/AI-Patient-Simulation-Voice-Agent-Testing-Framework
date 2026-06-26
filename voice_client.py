@@ -102,30 +102,40 @@ class VoiceClient:
             raise RuntimeError(f"Vapi call creation request failed: {exc}") from exc
 
     def play_text_on_call(self, call_id: str, tts_text: str, language: str = "en-US", voice: str = "alloy") -> Dict[str, Any]:
-        """Send a follow-up TTS action to an active call."""
-        payload = {"action": "tts", "voice": {"language": language, "voice": voice, "text": tts_text}}
-        url = f"{self.base_url.rstrip('/')}/calls/{call_id}/actions"
+        """Send a follow-up message to an active Vapi call using live call control."""
+        lookup_url = f"{self.base_url.rstrip('/')}/call/{call_id}"
         try:
-            resp = requests.post(url, json=payload, headers=self._build_headers(), timeout=30)
+            resp = requests.get(lookup_url, headers=self._build_headers(), timeout=10)
             resp.raise_for_status()
-            data = resp.json()
+            call_data = resp.json()
         except requests.exceptions.HTTPError as exc:
             status = getattr(exc.response, "status_code", None)
-            if status == 404 and "/v1" not in self.base_url.rstrip("/"):
-                alt_url = f"{self.base_url.rstrip('/')}/v1/calls/{call_id}/actions"
-                logger.info("Received 404 when sending action to %s, retrying with %s", url, alt_url)
-                resp = requests.post(alt_url, json=payload, headers=self._build_headers(), timeout=30)
-                try:
-                    resp.raise_for_status()
-                    data = resp.json()
-                except requests.exceptions.HTTPError:
-                    text = getattr(resp, "text", "")
-                    raise requests.exceptions.HTTPError(f"Vapi action failed (status={resp.status_code}) at {alt_url}: {text}")
-            else:
-                text = getattr(exc.response, "text", "") if getattr(exc, "response", None) else ""
-                raise requests.exceptions.HTTPError(f"Vapi action failed (status={status}) at {url}: {text}")
+            text = getattr(exc.response, "text", "") if getattr(exc, "response", None) else ""
+            raise requests.exceptions.HTTPError(f"Vapi call lookup failed (status={status}) at {lookup_url}: {text}") from exc
+        except requests.RequestException as exc:
+            raise RuntimeError(f"Vapi call lookup request failed: {exc}") from exc
 
-        logger.debug("Sent follow-up TTS to call %s", call_id)
+        monitor = call_data.get("monitor") or {}
+        control_url = monitor.get("controlUrl") or monitor.get("control_url")
+        if not control_url:
+            raise RuntimeError(f"Vapi call {call_id} did not return a controlUrl. Response={call_data}")
+
+        payload = {"type": "say", "content": tts_text, "endCallAfterSpoken": False}
+        try:
+            resp = requests.post(control_url, json=payload, headers=self._build_headers(), timeout=30)
+            resp.raise_for_status()
+            try:
+                data = resp.json()
+            except ValueError:
+                data = {"raw_text": resp.text}
+        except requests.exceptions.HTTPError as exc:
+            status = getattr(exc.response, "status_code", None)
+            text = getattr(exc.response, "text", "") if getattr(exc, "response", None) else ""
+            raise requests.exceptions.HTTPError(f"Vapi action failed (status={status}) at {control_url}: {text}") from exc
+        except requests.RequestException as exc:
+            raise RuntimeError(f"Vapi action request failed: {exc}") from exc
+
+        logger.debug("Sent follow-up message to call %s via %s", call_id, control_url)
         return data
 
     def get_call_status(self, call_id: str) -> Dict[str, Any]:
