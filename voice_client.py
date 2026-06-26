@@ -39,11 +39,8 @@ class VoiceClient:
         self.assistant_id = os.getenv("VAPI_ASSISTANT_ID")
         self.phone_number_id = os.getenv("VAPI_PHONE_NUMBER_ID")
         self.target_number = os.getenv("TARGET_TEST_NUMBER")
-        # Optional overrides for providers with custom paths/payloads
+        # Optional override for providers with a custom endpoint path.
         self.call_path_override = os.getenv("VAPI_CALL_PATH")  # e.g. /voice/call or /v2/calls
-        self.auth_header_name = os.getenv("VAPI_AUTH_HEADER_NAME", "Authorization")
-        # Optional JSON template with placeholders {to},{from},{text},{language},{voice}
-        self.call_json_template = os.getenv("VAPI_CALL_JSON_TEMPLATE")
         self._validate_configuration()
 
     def _validate_configuration(self) -> None:
@@ -60,109 +57,49 @@ class VoiceClient:
             )
 
     def _build_headers(self) -> Dict[str, str]:
-        # Allow provider to expect a different header name via VAPI_AUTH_HEADER_NAME
-        return {self.auth_header_name: f"Bearer {self.api_key}", "Content-Type": "application/json"}
+        return {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
     def call_target(self, tts_text: str, language: str = "en-US", voice: str = "alloy") -> Dict[str, Any]:
-        """Create an outbound call and speak the initial TTS text.
+        """Create an outbound VAPI phone call using a single supported payload structure."""
+        endpoint_path = self.call_path_override or "/call"
+        if not endpoint_path.startswith("/"):
+            endpoint_path = f"/{endpoint_path}"
+        url = f"{self.base_url.rstrip('/')}{endpoint_path}"
 
-        Returns a dict with `call_id` and the raw provider response.
-        """
-        # Candidate endpoint paths to try (Vapi standard `/call` prioritized).
-        # Removed `/calls/outbound` which is not supported by Vapi.
-        candidates = [
-            "/calls",
-            "/call",
-            "/v1/call",
-            "/v1/calls",
-            "/calls/create",
-            "/v1/calls/create",
-            "/voice/calls",
-            "/v1/voice/calls",
-            "/voice/call",
-            "/v1/voice/call",
-        ]
-        # If user provided an explicit path, try it first
-        if self.call_path_override:
-            if not self.call_path_override.startswith("/"):
-                self.call_path_override = f"/{self.call_path_override}"
-            candidates.insert(0, self.call_path_override)
+        payload: Dict[str, Any] = {
+            "type": "outboundPhoneCall",
+            "customer": {"number": self.target_number},
+            "assistant": {"firstMessage": tts_text},
+        }
+        if self.assistant_id:
+            payload["assistantId"] = self.assistant_id
+        if self.phone_number_id:
+            payload["phoneNumberId"] = self.phone_number_id
 
-        # Candidate header styles
-        header_variants = [
-            {self.auth_header_name: f"Bearer {self.api_key}", "Content-Type": "application/json"},
-            {"X-API-Key": self.api_key, "Content-Type": "application/json"},
-            {self.auth_header_name: f"Bearer {self.api_key}", "X-API-Key": self.api_key, "Content-Type": "application/json"},
-        ]
+        headers = self._build_headers()
 
-        # Candidate payload shapes
-        payload_variants = []
-        # If user provided a JSON template, format and use it as highest priority
-        if self.call_json_template:
-            try:
-                tpl = self.call_json_template.format(to=self.target_number, from_=self.source_number or "", text=tts_text, language=language, voice=voice)
-                # Allow templates to use {from} by replacing placeholder name
-                tpl = tpl.replace("{from}", self.source_number or "")
-                payload_variants.append(json.loads(tpl))
-            except Exception as e:
-                logger.warning("Failed to parse VAPI_CALL_JSON_TEMPLATE: %s", e)
+        print(f"VAPI payload being sent to {url}:")
+        print(json.dumps(payload, indent=2))
+        logger.info("Vapi request payload: %s", json.dumps(payload, indent=2))
 
-        # Vapi-specific payload (preferred when assistant/phone ids are set)
-        if self.assistant_id and self.phone_number_id:
-            vapi_payload = {
-                "assistantId": self.assistant_id,
-                "customer": {"phoneNumber": self.target_number},
-                "phoneNumberId": self.phone_number_id,
-                "instructions": tts_text,
-            }
-            payload_variants.append(vapi_payload)
+        try:
+            resp = requests.post(url, json=payload, headers=headers, timeout=30)
+            if resp.status_code >= 200 and resp.status_code < 300:
+                try:
+                    data = resp.json()
+                except ValueError:
+                    data = {"raw_text": resp.text}
+                call_id = data.get("id") or data.get("call_id") or data.get("sid") or data.get("callId")
+                logger.info("Vapi call created at %s, id=%s", url, call_id)
+                return {"call_id": call_id, "response": data}
 
-        # Generic payload shapes (fallbacks)
-        p1 = {"to": self.target_number, "voice": {"language": language, "voice": voice, "text": tts_text}}
-        if self.source_number:
-            p1["from"] = self.source_number
-        payload_variants.append(p1)
-
-        p2 = {"to": self.target_number, "from": self.source_number or "", "actions": [{"type": "tts", "text": tts_text, "language": language, "voice": voice}]}
-        payload_variants.append(p2)
-
-        p3 = {"destination": self.target_number, "caller": self.source_number or "", "tts": tts_text}
-        payload_variants.append(p3)
-
-        p4 = {"phone": self.target_number, "from": self.source_number or "", "message": tts_text}
-        payload_variants.append(p4)
-
-        p5 = {"type": "call", "target": self.target_number, "speech": {"text": tts_text, "language": language, "voice": voice}}
-        payload_variants.append(p5)
-
-        errors = []
-        # Try combinations until one succeeds
-        for path in candidates:
-            url = f"{self.base_url.rstrip('/')}{path}"
-            for headers in header_variants:
-                for payload in payload_variants:
-                    try:
-                        logger.debug("Trying Vapi POST %s with headers=%s payload=%s", url, list(headers.keys()), {k: (v if k not in ['voice','actions'] else '...') for k,v in payload.items()})
-                        resp = requests.post(url, json=payload, headers=headers, timeout=30)
-                        # Log non-2xx responses and continue; capture body
-                        if resp.status_code >= 200 and resp.status_code < 300:
-                            try:
-                                data = resp.json()
-                            except ValueError:
-                                data = {"raw_text": resp.text}
-                            call_id = data.get("id") or data.get("call_id") or data.get("sid") or data.get("callId")
-                            logger.info("Vapi call created at %s, id=%s", url, call_id)
-                            return {"call_id": call_id, "response": data}
-                        else:
-                            text = resp.text
-                            errors.append({"url": url, "status": resp.status_code, "body": text, "headers": list(headers.keys())})
-                            logger.debug("Vapi attempt failed %s status=%s body=%s", url, resp.status_code, text)
-                    except requests.RequestException as e:
-                        errors.append({"url": url, "error": str(e)})
-
-        # If we reached here, no candidate worked
-        details = json.dumps(errors, indent=2)
-        raise RuntimeError(f"Vapi call creation failed. Tried multiple endpoints/payloads. Details: {details}")
+            error_body = resp.text
+            raise RuntimeError(
+                f"Vapi call creation failed (status={resp.status_code}) at {url}. "
+                f"Headers={headers} Payload={json.dumps(payload)} Response={error_body}"
+            )
+        except requests.RequestException as exc:
+            raise RuntimeError(f"Vapi call creation request failed: {exc}") from exc
 
     def play_text_on_call(self, call_id: str, tts_text: str, language: str = "en-US", voice: str = "alloy") -> Dict[str, Any]:
         """Send a follow-up TTS action to an active call."""
