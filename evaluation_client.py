@@ -1,0 +1,49 @@
+"""
+LLM-based evaluator for AI receptionist performance.
+Evaluates conversation transcripts after each call.
+"""
+
+from typing import Any, Dict
+from llm_client import get_llm_client
+import logging
+
+logger = logging.getLogger(__name__)
+
+class ReceptionistEvaluator:
+    def __init__(self, llm_model: str = None):
+        self.llm_client = get_llm_client(model=llm_model)
+
+    def evaluate(self, transcript: str) -> Dict[str, Any]:
+        prompt = (
+            """
+You are an expert medical call quality auditor. Analyze ONLY the performance of the receptionist AI in the following conversation transcript. Ignore the patient.
+
+For the receptionist, provide:
+- A list of appropriate medical intake questions asked (quote or summarize).
+- Missed or incorrect responses (list).
+- How urgent situations and personality traits of the patient were handled (describe, including any misses).
+- Quality of communication (clarity, empathy, professionalism).
+- 3 most actionable improvements for the receptionist.
+- A final overall score from 0 to 10 (as a number only).
+
+Format your response as JSON with fields: questions_asked, missed_or_incorrect, urgency_handling, communication_quality, improvements, score.
+
+Transcript:
+"""
+            + transcript
+        )
+        try:
+            result = self.llm_client.chat_completion(
+                messages=[{"role": "user", "content": prompt}],
+                system_prompt=None
+            )
+            import json
+            try:
+                parsed = json.loads(result)
+            except Exception as parse_exc:
+                logger.warning("Evaluation output not strictly valid JSON: %s", parse_exc)
+                parsed = {"raw_output": result}
+            return parsed
+        except Exception as e:
+            logger.error(f"Evaluation failed: {e}")
+            return {"error": str(e)}

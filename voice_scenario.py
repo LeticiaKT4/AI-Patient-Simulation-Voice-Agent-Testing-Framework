@@ -158,7 +158,50 @@ class VoiceSession:
     def finish(self) -> dict[str, str]:
         """Persist transcript and metadata to logs and return paths."""
         self.end_time = datetime.now(timezone.utc)
-        return self._save_artifacts()
+        artifacts = self._save_artifacts()
+
+        # ==== Post-call evaluation ====
+        try:
+            from evaluation_client import ReceptionistEvaluator
+            evaluator = ReceptionistEvaluator()
+            transcript = self.get_transcript()
+            evaluation_result = evaluator.evaluate(transcript)
+
+            # Save evaluation to logs/evaluation_<timestamp>.json
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            import json
+            eval_path = LOGS_DIR / f"evaluation_{timestamp}.json"
+            eval_path.write_text(json.dumps(evaluation_result, indent=2, ensure_ascii=False), encoding="utf-8")
+            artifacts["evaluation_path"] = str(eval_path)
+            logging.info(f"Saved evaluation to {eval_path}")
+
+            # Save summary txt
+            summary_path = LOGS_DIR / f"evaluation_summary_{timestamp}.txt"
+            def render_summary(data):
+                if "error" in data:
+                    return "[Evaluation error] " + str(data["error"])
+                if "raw_output" in data:
+                    return "[Malformed LLM output, raw below:]\n\n" + data["raw_output"]
+                parts = []
+                parts.append(f"Receptionist Evaluation (score: {data.get('score', '?')}/10)\n")
+                if q := data.get('questions_asked'):
+                    parts.append(f"Questions asked:\n{q}\n")
+                if m := data.get('missed_or_incorrect'):
+                    parts.append(f"Missed or incorrect responses:\n{m}\n")
+                if u := data.get('urgency_handling'):
+                    parts.append(f"Urgency and personality handling:\n{u}\n")
+                if c := data.get('communication_quality'):
+                    parts.append(f"Communication quality:\n{c}\n")
+                if i := data.get('improvements'):
+                    parts.append(f"Actionable improvements:\n{i}\n")
+                return "\n".join(parts)
+            summary_txt = render_summary(evaluation_result)
+            summary_path.write_text(summary_txt, encoding="utf-8")
+            artifacts["evaluation_summary_path"] = str(summary_path)
+            logging.info(f"Saved evaluation summary to {summary_path}")
+        except Exception as exc:
+            logging.error(f"Evaluation failed: {exc}")
+        return artifacts
 
 
 def main() -> None:
