@@ -74,21 +74,6 @@ pip install -r requirements.txt
 
 ```bash
 # Copy example env file
-cp .env.example .env
-
-# Edit .env with your OpenRouter API key
-# Get one at: https://openrouter.io
-```
-
-`.env` should look like:
-```
-OPENROUTER_API_KEY=your_api_key_here
-OPENROUTER_BASE_URL=https://openrouter.io/api/v1
-LLM_MODEL=openai/gpt-3.5-turbo
-LLM_TEMPERATURE=0.7
-LLM_MAX_TOKENS=1000
-```
-
 ### 3. Run Local Test
 
 ```bash
@@ -97,35 +82,85 @@ python conversation_simulator.py
 
 This launches an interactive prompt where YOU play the receptionist.
 
-### 4. Run Voice Call Test
+### 4. Voice Call Orchestration (**Key Feature: `voice_scenario.py`**)
 
 ```bash
 python voice_scenario.py
 ```
 
-This places a single outbound call to the configured `TARGET_TEST_NUMBER`, plays the patient opening prompt via the configured voice provider (Vapi), and records the simulated multi-turn conversation into a transcript file.
+This is the most important script in the project. It lets you:
 
-> Note: This flow reads `VAPI_API_KEY` and `TARGET_TEST_NUMBER` from `.env` and will only call the test number configured by `TARGET_TEST_NUMBER`.
+- **Select patient personality** (e.g., Standard, Anxious, Impatient, Elderly)
+- **Select scenario type and difficulty** from rich options (appointment, refill, billing, etc.)
+- **Place a real voice call** (using Vapi or other provider) to the configured test number
+- **Stream a full multi-turn conversation** between the simulated patient and a receptionist LLM
+- **Automatically record** the transcript, metadata, evaluation, and per-turn audio (MP3s) for every session
 
+**What happens?**
+
+1. You are interactively prompted:
+    - Pick the personality and type/difficulty of scenario
+2. The patient and scenario profiles are built as you choose
+3. The AI patient calls the target number and speaks as configured
+4. The AI receptionist (LLM) replies; you can tune its prompt in code
+5. Every turn is recorded (audio & text), analyzed and scored by the built-in evaluator
+6. All logs, recordings, and evaluation reports are saved in `logs/` (see below)
+
+**Sample Run:**
+```text
+🏥 AI Patient Voice Simulation
+
+Select patient personality:
+1. Standard
+2. Anxious
+3. Impatient
+4. Elderly
+Enter number [1]: 2
+
+Select scenario type:
+1. Appointment scheduling
+2. Appointment cancellation
+3. Appointment rescheduling
+...etc...
+Enter number [1]: 3
+
+Select scenario difficulty:
+1. Easy
+2. Medium
+3. Hard
+Enter number [2]: 1
+
+Placing outbound call... streaming multi-turn conversation...
 ```
-🏥 AI Patient Simulation - Conversation Tester
 
-Select patient type:
-1. Standard (healthy, organized)
-2. Anxious (worried, asks for reassurance)
-3. Impatient (busy, direct)
-4. Elderly (forgetful, detailed)
+#### How logs are saved (after every session):
+```
+logs/
+├── transcript_<timestamp>.txt            # Conversation transcript
+├── metadata_<timestamp>.json             # Patient, scenario, and session info
+├── evaluation_<timestamp>.json           # Raw LLM evaluation
+├── evaluation_summary_<timestamp>.txt    # Human-readable summary
+└── audio/
+    ├── patient_turn_0.mp3
+    ├── receptionist_turn_0.mp3
+    ├── patient_turn_1.mp3
+    └── ...
+```
 
-Enter choice (1-4): 2
+Each audio file is an MP3 for one turn. `logs/audio/` is created per session automatically.
 
-Select scenario:
-1. Appointment Scheduling - Easy
-2. Appointment Scheduling - Medium
-3. Appointment Scheduling - Hard
-4. Medication Refill - Easy
-5. Office Information - Easy
+**Tuning**: Both the patient and scenario logic can be easily extended or tweaked in the respective Python files (`patient_profiles.py`, `scenario_generator.py`).
 
-Enter choice (1-5): 3
+---
+
+### 🤖 Conversation Evaluator (`evaluation_client.py`)
+
+After a simulated call, this tool automatically runs an LLM-based evaluation over the generated transcript and metadata. The output — including scores and qualitative summary — is saved as both JSON and a readable `.txt` in the `logs` folder (see above).
+
+**Why?**
+- This lets you quickly measure realism, completeness, and accuracy of the call, using scalable LLM evaluation — no human review required unless you want it.
+
+Run after every call session for a full testing and research loop.
 
 ========================================================================
 PATIENT SIMULATION STARTING

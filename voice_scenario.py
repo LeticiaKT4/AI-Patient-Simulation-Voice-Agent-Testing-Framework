@@ -210,8 +210,33 @@ def main() -> None:
     print("This will place a single outbound call to the configured TARGET_TEST_NUMBER.")
     print("The patient AI opening prompt is spoken over Vapi, and the full simulated conversation is logged.")
 
-    patient_profile = create_sample_patient("standard")
-    scenario = create_scenario_for_testing()
+
+    # ---- Personality selection ----
+    personalities = ["standard", "anxious", "impatient", "elderly"]
+    print("\nSelect patient personality:")
+    for i, p in enumerate(personalities, 1):
+        print(f"{i}. {p.capitalize()}")
+    personality_idx = int(input("Enter number [1]: ") or "1") - 1
+    patient_profile = create_sample_patient(personalities[personality_idx])
+
+    # ---- Scenario type selection ----
+    from scenario_generator import ScenarioType, ScenarioDifficulty  # Ensure enums are imported
+    scenario_types = list(ScenarioType)
+    print("\nSelect scenario type:")
+    for i, s in enumerate(scenario_types, 1):
+        print(f"{i}. {s.value.replace('_', ' ').capitalize()}")
+    scenario_idx = int(input("Enter number [1]: ") or "1") - 1
+    scenario_type = scenario_types[scenario_idx]
+
+    # ---- Scenario difficulty selection ----
+    difficulties = list(ScenarioDifficulty)
+    print("\nSelect scenario difficulty:")
+    for i, d in enumerate(difficulties, 1):
+        print(f"{i}. {d.value.capitalize()}")
+    diff_idx = int(input("Enter number [2]: ") or "2") - 1
+    difficulty = difficulties[diff_idx]
+
+    scenario = create_scenario_for_testing(scenario_type, difficulty)
     session = VoiceSession(patient_profile=patient_profile, scenario=scenario)
 
     call_id = session.start_call()
