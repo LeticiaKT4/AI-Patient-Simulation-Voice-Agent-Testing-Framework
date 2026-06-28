@@ -1,55 +1,37 @@
+
 # AI Patient Simulation System
 
-A Python-based framework for testing AI medical office receptionists through realistic patient simulations. Start with text-based conversations locally, then scale to real phone calls.
+A Python framework for testing conversational AI medical receptionists using realistic patient personas. Features voice integration for real call simulation and local-only legacy testing.
 
 ## 📋 Project Overview
 
-This system simulates realistic patient behavior during medical office calls to test and debug voice AI systems. It includes:
+This system generates lifelike simulated patient calls to test and evaluate AI receptionist systems. It supports:
 
-- **Consistent patient personas** with medical history and personality traits
-- **Realistic scenarios** (appointment scheduling, medication refills, etc.)
-- **Centralized LLM integration** via OpenRouter (easy to swap models)
-- **Local text-based testing** before phone integration
-- **Transcript analysis** for identifying issues
+- **Rich patient profiles:** Personalities, health history, demographics
+- **Flexible medical scenarios:** Scheduling, billing, medication, etc.
+- **Centralized LLM client:** Easy model swaps
+- **Phone call orchestration:** Make real test calls (Vapi integration)
+- **Automated transcript & evaluation logging**
+- **Optional local-only conversation simulator (legacy)**
 
 ## 🏗️ Architecture
 
-### File Structure
+### Core Files & Roles
 
 ```
-ai-patient-simulation/
-├── llm_client.py              # Centralized LLM/API client
-├── patient_profiles.py        # Patient data structures & samples
-├── scenario_generator.py      # Scenario creation logic
-├── patient_agent.py           # AI patient behavior engine
-├── conversation_simulator.py  # Local text-based testing
-├── voice_client.py            # Vapi voice call helper
-├── voice_scenario.py          # Voice call orchestration and transcript saving (Vapi)
-├── requirements.txt           # Python dependencies
-├── .env.example              # Configuration template
-├── .gitignore                # Git ignore rules
-└── README.md                 # This file
+├── voice_scenario.py          # MAIN ENTRY: voice-enabled patient simulation for production/test
+├── patient_agent.py           # Simulates patient behavior using LLM and context
+├── patient_profiles.py        # Patient data structures and persona generation
+├── scenario_generator.py      # Generates medical/office scenarios
+├── llm_client.py              # Centralized LLM (OpenRouter) client
+├── voice_client.py            # Thin wrapper for Vapi HTTP voice API
+├── evaluation_client.py       # Scores calls using LLM transcript analysis
+├── conversation_simulator.py  # Legacy/local text testing only (**deprecated**)
+├── requirements.txt           # Dependencies
+├── README.md
+├── logs/                      # Output transcripts, metadata, and evaluation files
 ```
-
-### How Files Connect
-
-```
-┌─────────────────────────────┐
-│   conversation_simulator.py  │  ← User Interface (local testing)
-└────────────┬────────────────┘
-             │
-┌────────────▼────────────────┐
-│    patient_agent.py         │  ← AI Patient Brain
-│  (uses LLM + Context)       │
-└────┬──────────────┬─────────┘
-     │              │
-     ▼              ▼
-┌──────────────┐  ┌──────────────────────┐
-│ llm_client.py│  │ patient_profiles.py  │
-│ (OpenRouter) │  │ + scenario_generator │
-└──────────────┘  └──────────────────────┘
-```
-
+    
 ## 🚀 Quick Start
 
 ### 1. Setup
@@ -94,7 +76,7 @@ This is the most important script in the project. It lets you:
 - **Select scenario type and difficulty** from rich options (appointment, refill, billing, etc.)
 - **Place a real voice call** (using Vapi or other provider) to the configured test number
 - **Stream a full multi-turn conversation** between the simulated patient and a receptionist LLM
-- **Automatically record** the transcript, metadata, evaluation, and per-turn audio (MP3s) for every session
+- **Automatically record** the transcript, metadata, evaluation
 
 **What happens?**
 
@@ -103,7 +85,7 @@ This is the most important script in the project. It lets you:
 2. The patient and scenario profiles are built as you choose
 3. The AI patient calls the target number and speaks as configured
 4. The AI receptionist (LLM) replies; you can tune its prompt in code
-5. Every turn is recorded (audio & text), analyzed and scored by the built-in evaluator
+5. Every turn is recorded (text), analyzed and scored by the built-in evaluator
 6. All logs, recordings, and evaluation reports are saved in `logs/` (see below)
 
 **Sample Run:**
@@ -140,14 +122,7 @@ logs/
 ├── metadata_<timestamp>.json             # Patient, scenario, and session info
 ├── evaluation_<timestamp>.json           # Raw LLM evaluation
 ├── evaluation_summary_<timestamp>.txt    # Human-readable summary
-└── audio/
-    ├── patient_turn_0.mp3
-    ├── receptionist_turn_0.mp3
-    ├── patient_turn_1.mp3
-    └── ...
 ```
-
-Each audio file is an MP3 for one turn. `logs/audio/` is created per session automatically.
 
 **Tuning**: Both the patient and scenario logic can be easily extended or tweaked in the respective Python files (`patient_profiles.py`, `scenario_generator.py`).
 
@@ -375,11 +350,6 @@ Receptionist: I understand you're experiencing chest pain. Have you called 911?
 ...
 ```
 
-### Next Steps (Future)
-- Parse transcripts for common issues
-- Generate error reports
-- Track success rates by scenario type
-- Integrate with real phone systems (Vapi, Twilio)
 
 ## 🐛 Troubleshooting
 
@@ -403,31 +373,6 @@ Receptionist: I understand you're experiencing chest pain. Have you called 911?
 - ✅ Reduce `LLM_MAX_TOKENS` (default 1000 is conservative)
 - ✅ Switch to faster model like gpt-3.5-turbo
 - ✅ Check internet connection
-
-## 📚 Next Steps in Development
-
-1. ✅ **Foundation (this phase)**
-   - Core LLM client
-   - Patient profiles
-   - Scenario generation
-   - Local testing
-
-2. 🔄 **Phone Integration**
-   - Vapi or Twilio integration
-   - Real phone call simulation
-   - Audio recording/transcription
-
-3. 📈 **Analysis & Reporting**
-   - Transcript parsing
-   - Bug detection (repeated questions, misunderstandings)
-   - Success/failure metrics
-   - Report generation
-
-4. 🎯 **Advanced Features**
-   - Multi-turn complex scenarios
-   - Patient interruptions
-   - Background noise simulation
-   - Multiple patient types in one conversation
 
 ## 📞 API Reference
 

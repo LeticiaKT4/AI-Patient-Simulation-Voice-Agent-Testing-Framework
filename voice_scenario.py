@@ -158,6 +158,21 @@ class VoiceSession:
     def finish(self) -> dict[str, str]:
         """Persist transcript and metadata to logs and return paths."""
         self.end_time = datetime.now(timezone.utc)
+
+
+        transcript_source = "internal_simulation"
+        call_id = self.call_metadata.get("call_id")
+        real_transcript = None
+        if call_id:
+            real_transcript = self.voice_client.get_call_transcript(call_id)
+
+        if real_transcript:
+            logger.info(f"Using real transcript from Vapi for call {call_id} (source=real_vapi)")
+            self.transcript_lines = [line for line in real_transcript.splitlines() if line.strip()]
+            transcript_source = "real_vapi"
+        else:
+            logger.warning(f"WARNING: Real transcript unavailable. Falling back to internal simulation transcript for call {call_id}.")
+
         artifacts = self._save_artifacts()
 
         # ==== Post-call evaluation ====
@@ -166,6 +181,7 @@ class VoiceSession:
             evaluator = ReceptionistEvaluator()
             transcript = self.get_transcript()
             evaluation_result = evaluator.evaluate(transcript)
+            evaluation_result["_transcript_source"] = transcript_source
 
             # Save evaluation to logs/evaluation_<timestamp>.json
             timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
@@ -183,7 +199,60 @@ class VoiceSession:
                 if "raw_output" in data:
                     return "[Malformed LLM output, raw below:]\n\n" + data["raw_output"]
                 parts = []
-                parts.append(f"Receptionist Evaluation (score: {data.get('score', '?')}/10)\n")
+                source = data.get('_transcript_source', '?')
+                parts.append(f"Receptionist Evaluation (score: {data.get('score', '?')}/10, transcript_source: {source})\n")
+                if q := data.get('questions_asked'):
+                    parts.append(f"Questions asked:\n{q}\n")
+                if m := data.get('missed_or_incorrect'):
+                    parts.append(f"Missed or incorrect responses:\n{m}\n")
+                if u := data.get('urgency_handling'):
+                    parts.append(f"Urgency and personality handling:\n{u}\n")
+                if c := data.get('communication_quality'):
+                    parts.append(f"Communication quality:\n{c}\n")
+                if i := data.get('improvements'):
+                    parts.append(f"Actionable improvements:\n{i}\n")
+                return "\n".join(parts)
+            summary_txt = render_summary(evaluation_result)
+            summary_path.write_text(summary_txt, encoding="utf-8")
+            artifacts["evaluation_summary_path"] = str(summary_path)
+            logging.info(f"Saved evaluation summary to {summary_path}")
+        except Exception as exc:
+            logging.error(f"Evaluation failed: {exc}")
+        
+        # Print out the final transcript to ensure console, file, and evaluation match
+        print("\n======= FINAL TRANSCRIPT (source: {}):\n".format(transcript_source))
+        print(self.get_transcript())
+
+        return artifacts
+
+        artifacts = self._save_artifacts()
+
+        # ==== Post-call evaluation ====
+        try:
+            from evaluation_client import ReceptionistEvaluator
+            evaluator = ReceptionistEvaluator()
+            transcript = self.get_transcript()
+            evaluation_result = evaluator.evaluate(transcript)
+            evaluation_result["_transcript_source"] = transcript_source
+
+            # Save evaluation to logs/evaluation_<timestamp>.json
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            import json
+            eval_path = LOGS_DIR / f"evaluation_{timestamp}.json"
+            eval_path.write_text(json.dumps(evaluation_result, indent=2, ensure_ascii=False), encoding="utf-8")
+            artifacts["evaluation_path"] = str(eval_path)
+            logging.info(f"Saved evaluation to {eval_path}")
+
+            # Save summary txt
+            summary_path = LOGS_DIR / f"evaluation_summary_{timestamp}.txt"
+            def render_summary(data):
+                if "error" in data:
+                    return "[Evaluation error] " + str(data["error"])
+                if "raw_output" in data:
+                    return "[Malformed LLM output, raw below:]\n\n" + data["raw_output"]
+                parts = []
+                source = data.get('_transcript_source', '?')
+                parts.append(f"Receptionist Evaluation (score: {data.get('score', '?')}/10, transcript_source: {source})\n")
                 if q := data.get('questions_asked'):
                     parts.append(f"Questions asked:\n{q}\n")
                 if m := data.get('missed_or_incorrect'):

@@ -20,17 +20,62 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-class VoiceClient:
-    """Minimal voice client wrapper for a Vapi-style HTTP voice API.
 
-    Environment variables used:
-    - VAPI_API_KEY (required)
-    - VAPI_BASE_URL (optional, defaults to https://api.vapi.ai)
-    - VAPI_ASSISTANT_ID (optional, Vapi assistant id for `/call` endpoint)
-    - VAPI_PHONE_NUMBER_ID (optional, Vapi phoneNumberId for `/call` endpoint)
-    - VAPI_SOURCE_NUMBER (optional)
-    - TARGET_TEST_NUMBER (required)
+
+class VoiceClient:
     """
+    Minimal voice client wrapper for a Vapi-style HTTP voice API.
+    """
+
+    def get_call_transcript(self, call_id: str) -> str | None:
+        """Fetch transcript for a completed call from Vapi, if available. Prints raw status for debugging. Handles retry/timing and speaker preservation."""
+        import time
+        attempts = 5
+        last_status = None
+        for attempt in range(1, attempts + 1):
+            try:
+                status = self.get_call_status(call_id)
+                last_status = status
+                logger.debug(f"[VAPI get_call_status attempt {attempt}/{attempts}] Raw status: {json.dumps(status, indent=2, ensure_ascii=False)}")
+                # Try multiple possible field names
+                transcript_data = None
+                for k in ["transcript", "transcription", "full_transcript", "fullTranscription"]:
+                    transcript_data = status.get(k)
+                    if transcript_data:
+                        break
+                if transcript_data:
+                    if isinstance(transcript_data, str):
+                        logger.info(f"Call {call_id}: transcript found (string, source=Vapi, key={k}).")
+                        return transcript_data.strip()
+                    elif isinstance(transcript_data, list):
+                        logger.info(f"Call {call_id}: transcript found (list, source=Vapi, key={k}).")
+                        return "\n".join(map(str, transcript_data)).strip()
+                    logger.info(f"Call {call_id}: transcript found (other type, key={k}).")
+                        
+                # Try reconstructing from event logs, preserving speakers
+                events = status.get("events") or status.get("call_events") or []
+                dialogue = []
+                for ev in events:
+                    speaker = ev.get("speaker") or ev.get("role") or ev.get("from")
+                    text = ev.get("transcript") or ev.get("text") or ev.get("utterance")
+                    if speaker and text:
+                        dialogue.append(f"{speaker}: {text.strip()}")
+                if dialogue:
+                    logger.info(f"Call {call_id}: transcript reconstructed from events, with speakers preserved.")
+                    return "\n".join(dialogue)
+                # Otherwise, transcript still not available; wait and retry
+                if attempt < attempts:
+                    logger.info(f"Call {call_id}: transcript not yet available, retrying in 5s (attempt {attempt}/{attempts})...")
+                    time.sleep(5)
+            except Exception as e:
+                logger.warning(f"Failed to fetch real transcript for call {call_id} on attempt {attempt}: {e}")
+                if attempt < attempts:
+                    time.sleep(5)
+        # Final fallback after retries
+        logger.warning(f"Real transcript unavailable for call {call_id} after {attempts} attempts. Last status: {json.dumps(last_status, indent=2, ensure_ascii=False) if last_status else 'No status'}")
+        return None
+
+
 
     def __init__(self) -> None:
         self.api_key = os.getenv("VAPI_API_KEY")
@@ -60,11 +105,10 @@ class VoiceClient:
         return {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
     def call_target(self, tts_text: str, language: str = "en-US", voice: str = "alloy") -> Dict[str, Any]:
-        """Create an outbound VAPI phone call using a single supported payload structure."""
-        endpoint_path = self.call_path_override or "/call"
-        if not endpoint_path.startswith("/"):
-            endpoint_path = f"/{endpoint_path}"
-        url = f"{self.base_url.rstrip('/')}{endpoint_path}"
+        """Create an outbound Vapi call and print/log full response and call_id."""
+        # Always use /call endpoint, do not guess/version/pluralize.
+        endpoint_path = "/call"
+        url = f"{self.base_url.rstrip('/')}" + endpoint_path
 
         payload: Dict[str, Any] = {
             "type": "outboundPhoneCall",
@@ -78,18 +122,22 @@ class VoiceClient:
 
         headers = self._build_headers()
 
-        print(f"VAPI payload being sent to {url}:")
-        print(json.dumps(payload, indent=2))
-        logger.info("Vapi request payload: %s", json.dumps(payload, indent=2))
+        print(f"[VAPI REQUEST] POST {url}")
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+        logger.info("Vapi request payload: %s", json.dumps(payload, indent=2, ensure_ascii=False))
 
         try:
             resp = requests.post(url, json=payload, headers=headers, timeout=30)
+            logger.info("[VAPI RESPONSE] Status=%d, content=%s", resp.status_code, resp.text)
+            print(f"\n[VAPI RESPONSE] Status: {resp.status_code}")
+            print(resp.text)
             if resp.status_code >= 200 and resp.status_code < 300:
                 try:
                     data = resp.json()
                 except ValueError:
                     data = {"raw_text": resp.text}
-                call_id = data.get("id") or data.get("call_id") or data.get("sid") or data.get("callId")
+                call_id = data.get("id")
+                print(f"[VAPI] Extracted call_id: {call_id}")
                 logger.info("Vapi call created at %s, id=%s", url, call_id)
                 return {"call_id": call_id, "response": data}
 
@@ -139,23 +187,22 @@ class VoiceClient:
         return data
 
     def get_call_status(self, call_id: str) -> Dict[str, Any]:
-        url = f"{self.base_url.rstrip('/')}/calls/{call_id}"
+        # Use ONLY the official singular /call/{id} endpoint per docs—never guess, version, or pluralize
+        url = f"{self.base_url.rstrip('/')}/call/{call_id}"
         try:
             resp = requests.get(url, headers=self._build_headers(), timeout=10)
+            logger.info(f"[VAPI GET CALL] GET {url} Status={resp.status_code}")
+            print(f"[VAPI GET CALL] GET {url} Status={resp.status_code}")
+            print(resp.text)
             resp.raise_for_status()
-            return resp.json()
+            try:
+                return resp.json()
+            except Exception:
+                logger.error("Failed to decode call status JSON, returning text.")
+                return {"raw_text": resp.text}
         except requests.exceptions.HTTPError as exc:
             status = getattr(exc.response, "status_code", None)
-            if status == 404 and "/v1" not in self.base_url.rstrip("/"):
-                alt_url = f"{self.base_url.rstrip('/')}/v1/calls/{call_id}"
-                logger.info("Received 404 when fetching status from %s, retrying with %s", url, alt_url)
-                resp = requests.get(alt_url, headers=self._build_headers(), timeout=10)
-                try:
-                    resp.raise_for_status()
-                    return resp.json()
-                except requests.exceptions.HTTPError:
-                    text = getattr(resp, "text", "")
-                    raise requests.exceptions.HTTPError(f"Vapi status check failed (status={resp.status_code}) at {alt_url}: {text}")
-            else:
-                text = getattr(exc.response, "text", "") if getattr(exc, "response", None) else ""
-                raise requests.exceptions.HTTPError(f"Vapi status check failed (status={status}) at {url}: {text}")
+            text = getattr(exc.response, "text", "") if getattr(exc, "response", None) else ""
+            logger.error(f"Vapi status check failed (status={status}) at {url}: {text}")
+            print(f"Vapi status check failed (status={status}) at {url}: {text}")
+            raise
