@@ -1,0 +1,16 @@
+Receptionist Evaluation (score: 2/10, transcript_source: real_vapi)
+
+Questions asked:
+['Can you tell me your name?', 'What medication are you calling about?', 'Do you have insurance coverage?', 'Can you provide your date of birth for verification?', 'Can you provide your phone number?']
+
+Missed or incorrect responses:
+['Failed to ask for the specific allergy medication name, dosage, or prescribing physician', 'Did not ask the patient to confirm or spell their full name; accepted only first name initially', 'Did not ask for date of birth proactively as a standard identity verification step; awkwardly accepted phone number without confirming it was sufficient', 'Did not clarify what information is needed before connecting to patient support', 'Did not ask whether the patient had an urgent need or timeline for the refill', 'Abruptly disconnected/connected to patient support without confirming the patient wanted that', 'Failed to gather any clinical intake details (medication name, dose, last refill date, prescriber)', 'Provided no explanation of next steps before transferring']
+
+Urgency and personality handling:
+The patient expressed urgency ('I just really need to know'), but the receptionist did not acknowledge or triage the urgency. The receptionist did not ask if the patient was out of medication or had an immediate need. Instead, the receptionist deferred entirely to patient support without attempting to address the insurance question or set expectations. No escalation protocol or timeline was communicated.
+
+Communication quality:
+Clarity was poor — the receptionist's responses were fragmented and at times incoherent (e.g., 'That's helping you about the quest'). Empathy was minimal; the receptionist did not acknowledge the patient's frustration about insurance uncertainty or discomfort sharing personal information. Professionalism was undermined by the abrupt transfer, lack of clear next steps, and disjointed closing remarks. The receptionist failed to maintain a coherent conversational flow.
+
+Actionable improvements:
+['Ask complete intake questions upfront: full name, date of birth, specific medication name and dosage, prescribing doctor, and insurance details before attempting to process any request.', "Acknowledge patient concerns and urgency explicitly — validate the patient's worry about insurance coverage and provide a clear, honest answer about what can and cannot be done, rather than immediately transferring.", "Maintain coherent, professional communication throughout — avoid fragmented or nonsensical responses, confirm the patient's preferred next step before transferring, and provide a clear summary of what will happen next."]
