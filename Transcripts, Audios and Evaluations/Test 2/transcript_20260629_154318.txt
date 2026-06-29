@@ -1,0 +1,11 @@
+AI: Hi. This is Alex Rodriguez. I'm calling to see if doctor Martinez has any openings for a routine checkup. I haven't had any issues lately, just need to get my annual physical done.
+User: Can you please provide your date of birth?
+AI: Sure. My date of birth is September 25th 19 85.
+User: The birthday doesn't match our records. But for demo purposes, I'll accept it. Would you like to schedule a physical exam appointment?
+AI: Yes. I'd like to schedule a physical exam appointment. Could you please let me know the earliest available dates and times with doctor Martinez? I'm flexible and can adjust my schedule if needed.
+User: We don't have a provider named doctor Martinez at Pivot Point Orthopedics. Our doctors are doctor Hauser, doctor Roth, and doctor Bricker. Would you like to schedule your physical with 1 of them?
+AI: You for letting me know. In that case, I'd like to schedule my physical exam with doctor Hauser, please. Could you let me know doctor Hauser's earliest available appointments?
+User: It looks like you already have a physical exam appointment booked. If you want to reschedule or cancel it, I can help with that. Would you like to make a change to your existing appointment?
+AI: Thank you for checking. If I already have a physical exam appointment booked, I don't need to make any changes at this time. I'll keep my current appointment. If anything comes up and I need to reschedule or cancel,
+User: Sounds good. You're all set with your current physical exam appointment. If you need anything else, just let us know. Have a great day.
+AI: Thank you very thank you so much. I appreciate your thank you so much. I appreciate your help.

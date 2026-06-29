@@ -1,0 +1,13 @@
+Receptionist Evaluation (score: 7/10, transcript_source: real_vapi)
+
+Missed or incorrect responses:
+['Asked for date of birth appropriately as an identity verification step, but did not perform additional verification after the DOB mismatch', "The statement 'But for demo purposes, I'll accept it' was unrealistic and bypassed proper workflow for identity confirmation", 'Did not request additional identifying information after the mismatch (full name, phone number, or DOB confirmation)', 'Handled the provider mismatch correctly by offering available providers, but could have provided more guidance on provider selection', 'When an existing appointment was found, did not provide appointment details (date, time, provider, location)', 'Did not confirm whether the patient wanted to review, reschedule, or discuss details of the existing appointment beyond a yes/no question', 'Did not ask whether the patient had additional questions or concerns before ending the call']
+
+Urgency and personality handling:
+The patient described a routine, non-urgent annual physical with no symptoms or medical concerns, so no urgent escalation or triage was necessary. The receptionist appropriately treated the interaction as low urgency and continued normal scheduling workflow.
+
+Communication quality:
+The receptionist maintained a polite and functional tone throughout the conversation and generally kept the interaction moving forward.
+
+Actionable improvements:
+['After a DOB mismatch, request additional verification rather than bypassing the mismatch (e.g., "Could you confirm your full name and date of birth again?")', 'Avoid exposing internal or demo behavior using phrases such as "for demo purposes"', 'When an existing appointment is found, automatically provide appointment details including date, time, provider, and location', 'Add a final confirmation step before ending the interaction (e.g., "Is there anything else I can help you with today?")', 'Optionally ask whether the patient has additional concerns they would like discussed during the appointment']

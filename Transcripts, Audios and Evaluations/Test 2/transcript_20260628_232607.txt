@@ -1,5 +1,0 @@
-AI: Hi. This is Alex Rodriguez. I'm hoping to schedule my annual physical. Do you have any availability with doctor Martinez in the next few weeks? Standard feeling pretty good overall, so
-User: Speaking with Alex.
-AI: nothing specific to address. This is just their routine checkup. 
-User: Thank you, Alex. I'll check doctor Martinez's schedule for the next few weeks. Could you please let me know your preferred days or times? Also, do you have any specific concerns you'd like to discuss during your physical? Or is it just a routine checkup? 
-AI: The 14th works great for me. Morning would be ideal if you have something available. I like to get it done early in the day.
