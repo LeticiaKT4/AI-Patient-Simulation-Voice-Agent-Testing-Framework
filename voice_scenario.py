@@ -318,8 +318,6 @@ def main() -> None:
     print("\nConversation complete.")
     print(f"Transcript saved: {artifacts['transcript_path']}")
     print(f"Metadata saved: {artifacts['metadata_path']}")
-    print("\nSample transcript: \n")
-    print(transcript)
 
 
 if __name__ == "__main__":
