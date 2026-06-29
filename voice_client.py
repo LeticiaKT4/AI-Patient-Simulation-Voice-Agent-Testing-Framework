@@ -28,51 +28,36 @@ class VoiceClient:
     """
 
     def get_call_transcript(self, call_id: str) -> str | None:
-        """Fetch transcript for a completed call from Vapi, if available. Prints raw status for debugging. Handles retry/timing and speaker preservation."""
-        import time
-        attempts = 5
-        last_status = None
-        for attempt in range(1, attempts + 1):
-            try:
-                status = self.get_call_status(call_id)
-                last_status = status
-                logger.debug(f"[VAPI get_call_status attempt {attempt}/{attempts}] Raw status: {json.dumps(status, indent=2, ensure_ascii=False)}")
-                # Try multiple possible field names
-                transcript_data = None
-                for k in ["transcript", "transcription", "full_transcript", "fullTranscription"]:
-                    transcript_data = status.get(k)
-                    if transcript_data:
-                        break
-                if transcript_data:
-                    if isinstance(transcript_data, str):
-                        logger.info(f"Call {call_id}: transcript found (string, source=Vapi, key={k}).")
-                        return transcript_data.strip()
-                    elif isinstance(transcript_data, list):
-                        logger.info(f"Call {call_id}: transcript found (list, source=Vapi, key={k}).")
-                        return "\n".join(map(str, transcript_data)).strip()
-                    logger.info(f"Call {call_id}: transcript found (other type, key={k}).")
-                        
-                # Try reconstructing from event logs, preserving speakers
-                events = status.get("events") or status.get("call_events") or []
-                dialogue = []
-                for ev in events:
-                    speaker = ev.get("speaker") or ev.get("role") or ev.get("from")
-                    text = ev.get("transcript") or ev.get("text") or ev.get("utterance")
-                    if speaker and text:
-                        dialogue.append(f"{speaker}: {text.strip()}")
-                if dialogue:
-                    logger.info(f"Call {call_id}: transcript reconstructed from events, with speakers preserved.")
-                    return "\n".join(dialogue)
-                # Otherwise, transcript still not available; wait and retry
-                if attempt < attempts:
-                    logger.info(f"Call {call_id}: transcript not yet available, retrying in 5s (attempt {attempt}/{attempts})...")
-                    time.sleep(5)
-            except Exception as e:
-                logger.warning(f"Failed to fetch real transcript for call {call_id} on attempt {attempt}: {e}")
-                if attempt < attempts:
-                    time.sleep(5)
-        # Final fallback after retries
-        logger.warning(f"Real transcript unavailable for call {call_id} after {attempts} attempts. Last status: {json.dumps(last_status, indent=2, ensure_ascii=False) if last_status else 'No status'}")
+        """
+        Fetch transcript for a completed call from Vapi. Assumes call has finished.
+        """
+        status = self.get_call_status(call_id)
+        # Try multiple possible field names
+        transcript_data = None
+        for k in ["transcript", "transcription", "full_transcript", "fullTranscription"]:
+            transcript_data = status.get(k)
+            if transcript_data:
+                break
+        if transcript_data:
+            if isinstance(transcript_data, str):
+                logger.info(f"Call {call_id}: transcript found (string, source=Vapi, key={k}).")
+                return transcript_data.strip()
+            elif isinstance(transcript_data, list):
+                logger.info(f"Call {call_id}: transcript found (list, source=Vapi, key={k}).")
+                return "\n".join(map(str, transcript_data)).strip()
+            logger.info(f"Call {call_id}: transcript found (other type, key={k}).")
+        # Try reconstructing from event logs, preserving speakers
+        events = status.get("events") or status.get("call_events") or []
+        dialogue = []
+        for ev in events:
+            speaker = ev.get("speaker") or ev.get("role") or ev.get("from")
+            text = ev.get("transcript") or ev.get("text") or ev.get("utterance")
+            if speaker and text:
+                dialogue.append(f"{speaker}: {text.strip()}")
+        if dialogue:
+            logger.info(f"Call {call_id}: transcript reconstructed from events, with speakers preserved.")
+            return "\n".join(dialogue)
+        logger.warning(f"Transcript unavailable in final call status for call {call_id}.")
         return None
 
 
