@@ -1,0 +1,32 @@
+[Malformed LLM output, raw below:]
+
+```json
+{
+  "questions_asked": [
+    "Asked for first and last name to create a demo patient profile",
+    "Asked which available doctor the patient would like to schedule with (multiple times due to name confusion)",
+    "Asked whether the patient wants to look for a later date or see another doctor when no appointments are available",
+    "Asked if the patient has a specific week or month in mind for scheduling",
+    "Asked whether to look for the next available appointment after July 6th",
+    "Presented available appointment options and asked which one to book",
+    "Asked if the patient would like a text reminder with appointment details",
+    "Asked if there is anything else to help with"
+  ],
+  "missed_or_incorrect": [
+    "Failed to ask for date of birth as a verification step — instead fabricated a demo DOB ('July 4th 2000') and presented it as fact, which is unprofessional and potentially confusing",
+    "Repeatedly misstated doctor names: said 'doctor Dougie Houser' instead of 'doctor Judy Houser', and 'doctor Adam Brecker' instead of 'doctor Adam Bricker', causing ongoing confusion",
+    "Failed to proactively confirm or collect key intake information such as insurance details, reason for visit beyond 'routine checkup', or preferred contact information",
+    "Did not verify patient identity beyond name (no DOB confirmation, no phone number, no address)",
+    "When presenting appointment options, introduced doctors (Zeebigniew Lukowski, Kelly Noble) that were never mentioned before without any introduction or explanation",
+    "The text reminder question was cut off and awkwardly phrased: 'Would you like a text with your appoint' — unclear and unprofessional delivery"
+  ],
+  "urgency_handling": "No urgent situations arose during this call. The patient requested a routine checkup with no urgent or emergent concerns. The receptionist appropriately navigated the scheduling process by offering alternatives when the preferred doctors had no availability. However, the receptionist did not ask any screening questions to confirm that the visit was truly non-urgent (e.g., 'Are you currently experiencing any pain or symptoms that need immediate attention?'), which is a missed opportunity for proper triage.",
+  "communication_quality": "The receptionist was generally polite and professional in tone, using courteous language throughout. However, communication was undermined by repeated misstatement of doctors' names, which caused confusion and required the patient to correct the receptionist multiple times. The fabricated demo date of birth was inappropriate. The text reminder question was garbled and unclear. The receptionist did not demonstrate strong empathy or active listening — there was no acknowledgment of the confusion caused by the name errors. Clarity suffered from the disjointed flow caused by repeated corrections. Overall, the tone was adequate but the execution was sloppy.",
+  "improvements": [
+    "1. Verify patient identity properly by asking the patient to confirm their date of birth, phone number, and other identifying information rather than fabricating demo data and presenting it as the patient's actual information.",
+    "2. Confirm and practice correct spelling and pronunciation of all provider names before engaging with patients. Repeatedly misstating names erodes patient trust and creates unnecessary confusion and wasted time.",
+    "3. Ask basic screening/triage questions even for routine visits (e.g., 'Are you currently experiencing any symptoms or concerns that may need sooner attention?') and collect complete intake information including insurance details, current medications, and contact information to ensure a thorough and efficient appointment."
+  ],
+  "score": 4
+}
+```

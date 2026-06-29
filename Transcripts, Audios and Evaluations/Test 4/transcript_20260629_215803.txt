@@ -1,0 +1,31 @@
+AI: Hi. This is Alex Rodriguez. I'd like to schedule a routine checkup with doctor Martinez, please.
+User: Would you like to create a demo patient profile 1st? I just need your 1st and last name to get started.
+AI: Sure. My name is Alex Rodriguez.
+User: Your patient profile is set up, and your date of birth is July 4th 2000 for demo purposes. How can I help you today?
+AI: Thank you. I'd like to schedule a routine checkup with doctor Martinez at the earliest available appointment, please.
+User: Doctor Martinez is not listed as a provider at Pivot Point Orthopaedics. Our doctors are doctor Judy Houser, doctor Doug Ross, and doctor Adam Bricker. You like to schedule your checkup with 1 of them?
+AI: You for letting me know. I'd like to schedule my routine checkup with doctor Judy Hauser, please.
+User: Doctor Judy Houser is not listed as a provider. At Pivot Point Orthopaedics. The available doctors are doctor Judy Hauser, doctor Doug Ross, and doctor Adam Bricker. Would you like to schedule your routine checkup with 1 of these doctors?
+AI: Apologies for the confusion earlier. Yes. I would like to schedule my routine checkup with doctor Judy Hauser.
+User: No problem. Which doctor would you like to see for your routine checkup? Doctor Dougie Houser, doctor Doug Ross, or doctor Adam Brecker.
+AI: I'd like to schedule my routine checkup with doctor Dougie Houser, please.
+User: There are no available appointments with doctor Judy Hauser in the next week. Would you like to look for a later date, or are you open to seeing another doctor?
+AI: I'm open to seeing another doctor. Please check for the earliest available appointment with doctor Doug Ross.
+User: There are no available appointments with doctor Doug Ross in the next week either. Would you like to try a later date or check for the earliest appointment with doctor Adam Bricker?
+AI: Let's check for the earliest available appointment with doctor Adam Bricker, please.
+User: There are no available appointments with doctor Adam Bricker in the next week either. Would you like to search for a later day? Or would you prefer to have the clinic follow-up with you directly?
+AI: Let's search for a later date, please. If possible, please look for the next available appointment with
+User: Do you have a specific week or month in mind?
+AI: an
+User: Or should I look for the next available appointment? After July 6th?
+AI: Yes. Please look for the next available appointment after July 6th. Thank you.
+User: Here are the earliest available appointments on Wednesday, July 8th. 9 30 AM with doctor Zeebigniew Lukowski, 10 AM with doctor Kelly Noble, 11 AM with doctor Kelly Noble. Would you like to book 1 of these times?
+AI: Yes. I'd like to book the 10 AM appointment with doctor Kelly Noble on Wednesday, July 8th. Thank you.
+User: Your routine checkup is scheduled for Wednesday, July 8th at 10 AM with doctor Kelly Noble at Pivot Point Orthopaedics. Please bring your photo ID insurance card, a list of your current medications, and any imaging disks you have. Would you like a text
+AI: Yes. I would like
+User: with your appoint
+AI: like yes. I would
+User: 'll get a text with your you should receive a text message with your appointment details soon. Is there anything else I can help you with today?
+AI: Thank you. That's all I need for now. Have a great day.
+User: You're all set. Have a great day.
+AI: Thank you. You too.
