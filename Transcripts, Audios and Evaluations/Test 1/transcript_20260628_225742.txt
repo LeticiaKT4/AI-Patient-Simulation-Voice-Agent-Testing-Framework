@@ -1,0 +1,23 @@
+AI: Hi. This is Sarah Chen. I'd like to schedule a routine checkup with doctor Martinez, please.
+User: Pivot Point Orthopedics. Part of Pretty Good AI. Am I speaking with Alex?
+AI: Oh, yes. Of course. My date of birth is March 15th 19 87.
+User: The birthday you gave doesn't match our records, but for demo per
+AI: Okay. Thank you. I appreciate your help.
+User: Of course. What can I do for you today?
+AI: I'd like to schedule a routine checkup. With doctor Martinez at Pivot Point Orthopedics. Could you please let me know the next available appointment slots?
+User: Like to book a general office visit for a routine checkup.
+AI: For 9 or 10 Yes. That's correct. I'd like to book a general office visit for a routine checkup.
+User: Is that right?
+AI: With doctor Martinez. A Tuesday or Wednesday would be ideal for me. That's possible. Would either of those days work?
+User: Would you like to hear the next
+AI: Perfect.
+User: available options with doctor Martinez?
+AI: Yes, please. I'd appreciate hearing the next available options with doctor Martinez. Yes. That all looks correct. Thank you so much. Is there anything else I need to do to prepare for the appointment?
+User: There aren't any open appointments with doctor Martinez in the next week. Would you like to look for a later date, or are you open to seeing another provider sooner?
+AI: Thank you for letting me know. I'd prefer to see doctor Martinez So could you please check for later dates with her? If nothing is available soon, I'm open to seeing another provider as well. That's very helpful. Thank you. Just to be sure, do I need to bring anything else? I wanna make sure I have everything ready. No. I think that covers everything. Thank you so much for your help. I feel much better knowing what to bring now.
+User: Bring a photo ID, your insurance card, and a listed any medications
+AI: Thank you so much.
+User: If there's anything specific you want to discuss, jot down your questions. You like to book the next available appointment with doctor Martinez? Or would you prefer to hear about other providers' openings for later dates?
+AI: Goodbye. Thank you again.
+User: Am I, Alex? If you need to schedule later, just give us a call.
+AI: Thank you. I'll check my schedule and reach out if I need to reschedule.

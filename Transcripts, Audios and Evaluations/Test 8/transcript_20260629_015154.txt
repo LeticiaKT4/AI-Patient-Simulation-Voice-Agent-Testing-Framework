@@ -1,0 +1,13 @@
+AI: Hi. I need to get a refill on my allergy medication. I'm not sure if my insurance is going to cover it. Can you help me figure that out?
+User: Part of Pretty Good AI.
+AI: My name is Alex Rodriguez. And I'm calling about getting a refill on my allergy medication. I have Cigna insurance, but I'm not sure if it's covered.
+AI: I'm sorry, but I'm not comfortable giving out my date of birth over the phone. I can give you my phone number instead. It's 5 5 5 0 1 0 0. Would that help you find my account?
+AI: Okay. I understand. I just really need to know if my insurance is going to cover this allergy medication refill. Can you at least tell me if Cigna typically covers allergy medications, or do I need to call my insurance company directly to find out?
+User: I can't process your refill or check your insurance coverage right now? I'll connect you to our patient support team so they can help you directly. Please stay on the line. Connecting you to a representative. Please wait.
+AI: That's helping you about the
+User: Hello. You've reached the Pretty Good AI test line.
+AI: quest. That would
+User: Goodbye.
+AI: goodbye. If you need help in the future, feel free to reach out. Have a great day.
+AI: Okay. I understand you need to verify my identity. I'll call my insurance company 1st to check on the coverage. And then I can come back with my date of birth to get the refill started. Thanks for your help.
+AI: Thanks so much for your help. I'll call Cigna

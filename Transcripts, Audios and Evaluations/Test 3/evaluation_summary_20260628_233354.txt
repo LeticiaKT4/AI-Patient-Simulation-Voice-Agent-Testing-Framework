@@ -1,0 +1,30 @@
+[Malformed LLM output, raw below:]
+
+```json
+{
+  "questions_asked": [
+    "I'll need your date of birth",
+    "me the full date of birth. Including the month and day.",
+    "Please go ahead and tell me your full date of birth.",
+    "I need your full date of birth to look up your information. Could you please tell me the month, day, and year of your birth?"
+  ],
+  "missed_or_incorrect": [
+    "Failed to verify the patient's date of birth despite four attempts — the patient never provided a clear, consistent date (gave 'March 15th 1985' then 'March 5th 15th 1985' which is nonsensical). The receptionist never flagged the inconsistency or asked for clarification.",
+    "Never asked for a second identifier (e.g., phone number, medical record number, address) to verify identity — a critical HIPAA and safety concern.",
+    "Did not ask what specific blood work was done or which tests the patient was inquiring about.",
+    "Did not ask if the patient had any symptoms or concerns that might elevate urgency.",
+    "Did not confirm the patient's contact information before the patient volunteered it at the end.",
+    "Did not ask if the patient had a preferred pharmacy or primary care physician on file.",
+    "Failed to set expectations about what the receptionist can and cannot disclose about results (e.g., that a doctor should interpret results).",
+    "The receptionist appeared to proceed with looking up records without ever confirming a valid date of birth — unclear if records were actually retrieved or if information was fabricated."
+  ],
+  "urgency_handling": "The patient expressed urgency multiple times ('I don't really have a lot of time,' 'I don't wanna wait around all week,' 'I need it today'). The receptionist did not acknowledge or validate this urgency at any point. When the patient demanded a callback before 5 PM, the receptionist eventually complied but never proactively assessed whether the situation was clinically urgent or offered to escalate to a nurse or triage line. The receptionist missed an opportunity to ask whether the patient was experiencing symptoms that would warrant more immediate attention. The urgency was only addressed reactively after the patient demanded it, not through proactive screening.",
+  "communication_quality": "Clarity was poor — the receptionist repeated the same question about date of birth four times without varying the approach or explaining why it was needed. There was no empathy demonstrated; the receptionist did not acknowledge the patient's frustration, anxiety about results, or time constraints. Professionalism was lacking: the receptionist failed to verify identity properly, did not use a professional greeting or closing, and the overall tone was robotic and repetitive. The receptionist also failed to provide a proper closing to the call, allowing the patient to hang up abruptly without confirming understanding or next steps.",
+  "improvements": [
+    "Implement a two-identifier verification protocol: always ask for date of birth AND a second identifier (phone number, medical record number, or address) before accessing any patient information. If the patient provides inconsistent information, politely flag the discrepancy and ask for clarification rather than repeating the same question.",
+    "Acknowledge patient emotions and urgency proactively: when a patient expresses time pressure or anxiety about results, respond with a brief empathetic statement (e.g., 'I understand this is stressful — let me help you as quickly as I can') and assess whether symptoms or concerns warrant escalation to a nurse or triage protocol.",
+    "Improve call structure with a professional greeting (name of practice, offer to help), clear explanation of what information is needed and why, and a proper closing that confirms next steps, sets expectations, and thanks the patient — rather than allowing the call to end abruptly."
+  ],
+  "score": 3
+}
+```

@@ -1,0 +1,16 @@
+Receptionist Evaluation (score: 3/10, transcript_source: real_vapi)
+
+Questions asked:
+['Can you please provide your date of birth?', 'I need your folding of birth to continue. Could you please state your complete date of birth? Including the month, day, and year?']
+
+Missed or incorrect responses:
+["Did not ask for patient's full name (only 'Robert Thompson' was volunteered by the AI patient, not confirmed by receptionist)", 'Did not ask for phone number (patient volunteered it unprompted)', 'Did not ask for insurance information', 'Did not ask for reason for visit beyond what was volunteered', 'Did not confirm or verify the appointment details before the call ended', 'Did not ask for preferred pharmacy or medical history updates', 'Failed to actually book the appointment despite the conversation progressing toward scheduling', 'Did not ask which patient identity was correct when two different dates of birth were given (March 14, 1978 vs. March 15, 1951)', "Did not address the patient's use of informal/potentially condescending language ('young lady')"]
+
+Urgency and personality handling:
+No urgent situation was presented in this call. The patient requested a routine annual physical, which is non-urgent. The receptionist appropriately treated it as a routine scheduling matter. However, the receptionist failed to recognize and resolve the conflicting information (two different dates of birth), which could represent a patient safety/identification issue.
+
+Communication quality:
+The receptionist was polite and professional in tone but had significant clarity issues. The phrase 'folding of birth' appears to be a speech-to-text or transcription error that was not corrected, which could confuse patients. The receptionist was persistent in asking for the date of birth, which is appropriate. However, the receptionist failed to close the interaction properly — the appointment was never confirmed or booked, and the call ended abruptly without a clear resolution. Empathy was minimal but adequate for a routine scheduling call.
+
+Actionable improvements:
+['Always verify and confirm patient identity by cross-referencing at least two identifiers (full name + date of birth) and flag discrepancies immediately — the receptionist received two different dates of birth and never addressed the conflict.', 'Use a structured intake script to ensure all required information is collected: full name, date of birth, phone number, insurance, reason for visit, and preferred pharmacy before attempting to schedule.', 'Always confirm and clearly communicate the appointment details (date, time, provider) back to the patient and explicitly state that the appointment has been booked before ending the call.']

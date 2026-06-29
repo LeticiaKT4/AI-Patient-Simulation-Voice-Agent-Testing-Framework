@@ -1,0 +1,13 @@
+Receptionist Evaluation (score: 1/10, transcript_source: real_vapi)
+
+Missed or incorrect responses:
+["Failed to ask for patient's date of birth for verification", "Failed to ask for patient's full name (patient volunteered it)", 'Failed to confirm existing appointment details before rescheduling', 'Failed to ask which provider the appointment is with', 'Failed to ask reason for rescheduling', 'Failed to confirm new appointment availability', 'Failed to verify patient identity at all — no intake protocol followed', 'Patient never provided DOB; receptionist failed to escalate or properly handle verification failure', "Ended call abruptly without resolving the patient's request", "Repeatedly said 'Goodbye' while the patient was still engaged, prematurely closing the interaction"]
+
+Urgency and personality handling:
+No urgency assessment was performed. The patient's request was routine (rescheduling), but the receptionist failed to recognize that the patient could not be verified and did not properly escalate to patient support when verification failed. The patient was essentially abandoned mid-call with no resolution offered.
+
+Communication quality:
+Poor. The receptionist demonstrated minimal clarity and professionalism. Responses were disjointed and repetitive. There was no empathy shown toward the patient's inability to verify. The receptionist said 'Goodbye' multiple times while the patient was still speaking, which is rude and unprofessional. No confirmation of details, no summarization of next steps, and no warm closing. The overall tone was dismissive.
+
+Actionable improvements:
+['Implement a proper intake/verification protocol: always ask for full name and date of birth before accessing or modifying any appointment, and confirm details repeat back to the patient.', "Never say 'Goodbye' or end the call while the patient is still speaking — use proper call-closing etiquette such as 'Is there anything else I can help you with?' before ending.", 'When verification fails, proactively offer to connect the patient to patient support or explore alternative verification methods rather than letting the call dissolve without resolution.']

@@ -1,0 +1,19 @@
+AI: Yeah. Hi. I need to get my lisinopril refilled. I'm almost out. And I need to get that taken care of today. James Williams, I need the refill now, not later. Can you just look me up?
+User: Please provide your date of
+AI: Fine. It's March 15th 19 78. Can we get on with the refill now?
+User: Just to confirm, I have your name as Alex Williams.
+AI: It's 10 milligrams, same as always, Can you just send it to my pharmacy already?
+User: Could you please spell your 1st and last name for me? I wanna make sure I have the correct
+AI: Yeah. The usual 1 CVS on Main Street. How many more questions? Let's just get this done.
+User: Still need you to spell your 1st and last name for verification. Could you please spell out Alex Williams?
+AI: Of course. It's a l e x w I l l I a m s. Yeah. 24 to 48 hours? That's too long. I'm almost out now. Can you put a rush on this or
+User: Would you like me to look up your record using your phone
+AI: yeah. Mark it urgent. And give me the doctor's office number too. I'll call them myself.
+User: of birth again. Which would you prefer?
+AI: Sure. You can look up my record using my of birth. March 15th 19 78. If you need my phone number, let me know, and I'll provide it. Just please make this urgent. I really need that refill today. No. That's it. Thanks. I'll call the doctor's office myself. Thanks. Bye.
+User: Something's not right. I can't look up your information at the moment. Would you like me to let our clinic support team follow
+AI: You too.
+User: Take care. If you need anything else, just give us a call.
+AI: Thank you. I appreciate your help. Have a good day. Thanks. You too. Bye now.
+User: Goodbye.
+AI: Goodbye. Take care.

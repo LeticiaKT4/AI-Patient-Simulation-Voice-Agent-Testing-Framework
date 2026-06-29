@@ -1,0 +1,16 @@
+Receptionist Evaluation (score: 3/10, transcript_source: real_vapi)
+
+Questions asked:
+['Asked for date of birth', 'Asked patient to spell first and last name for verification', 'Asked whether to look up record using phone number or date of birth']
+
+Missed or incorrect responses:
+["Failed to confirm patient's full name and date of birth before proceeding with refill request", 'Did not ask for pharmacy name or location to confirm where to send the prescription', 'Did not ask about the prescribing doctor or confirm which provider manages the lisinopril', 'Did not ask about current medication list, allergies, or any changes in health status', 'Did not ask about insurance or contact information', "Failed to address the patient's urgency appropriately — did not explain the refill process, typical timelines, or offer to escalate to a nurse or provider", "Did not attempt to resolve the lookup failure or offer a clear next step beyond 'clinic support team will follow up'", 'Did not confirm any details before ending the call, leaving the interaction unresolved']
+
+Urgency and personality handling:
+The patient repeatedly expressed urgency — stating they were almost out of medication and needed the refill today. The receptionist AI failed to acknowledge this urgency with empathy, did not explain what 'urgent' means in the refill workflow, did not offer to escalate to a nurse or provider, and did not set realistic expectations. When the lookup failed, no contingency plan was offered. The urgency was essentially ignored throughout the interaction.
+
+Communication quality:
+The receptionist was professional in tone but lacked clarity and empathy. Questions were asked but not in a logical or complete sequence. The AI did not acknowledge the patient's frustration or urgency, did not summarize or confirm information, and ended the call without resolution. The communication felt robotic and transactional rather than patient-centered.
+
+Actionable improvements:
+['Always verify patient identity completely (full name, date of birth, and at least one additional identifier) before discussing any medical requests, and confirm all details back to the patient', 'When a patient expresses urgency about running out of medication, acknowledge the concern empathetically, explain the refill process and expected timeline, and offer to escalate to a nurse or provider if same-day fulfillment is needed', "When a system lookup fails, provide a clear and specific next step — such as scheduling a callback within a defined timeframe, transferring to a live agent, or offering the patient a direct number to call — rather than a vague 'support team will follow up'"]
