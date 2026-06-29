@@ -1,0 +1,16 @@
+Receptionist Evaluation (score: 5/10, transcript_source: real_vapi)
+
+Questions asked:
+["Confirmed patient identity: 'Am I speaking with Alex?'", 'Requested date of birth for verification', "Confirmed appointment type: 'Like to book a general office visit for a routine checkup'", 'Asked if patient wants to hear available options with doctor Martinez', "Provided appointment availability information and alternatives: 'Would you like to look for a later date, or are you open to seeing another provider sooner?'", "Provided pre-appointment instructions: 'Bring a photo ID, your insurance card, and a listed any medications'", "Offered additional scheduling options: 'Would you prefer to hear about other providers' openings for later dates?'"]
+
+Missed or incorrect responses:
+["Failed to catch or re-prompt when the patient's date of birth did not match records — simply moved on without resolving the discrepancy", "Did not confirm the patient's full identity or verify the correct date of birth before proceeding", 'Did not collect insurance provider information beyond mentioning the card', "Did not clarify the 'listed any medications' instruction — phrasing was unclear/incomplete", 'Did not capture a confirmed appointment date — the conversation ended with no booking made', "Repeated questions unnecessarily: asked 'Would you like to hear the next available options?' after the patient had already confirmed interest", 'Did not ask about preferred time of day for the appointment', 'Did not set expectations about appointment duration or check-in procedures']
+
+Urgency and personality handling:
+No urgent situation was presented in this call, so urgency handling was not directly tested. However, the receptionist did not proactively screen for any reasons the appointment might need to be expedited (e.g., pain, injury, referral requirements). For a routine checkup this is acceptable, but it represents a missed opportunity for thorough intake.
+
+Communication quality:
+Professional and polite throughout. Used courteous language ('Thank you,' 'Of course,' 'I appreciate your help'). However, clarity suffered from repetitive and redundant questions, and some responses were fragmented or unclear (e.g., 'For 9 or 10' with no context). Empathy was adequate but surface-level — no personalized reassurance or acknowledgment of the patient's preference for a specific provider. The flow was disjointed, with the receptionist sometimes responding to things not said by the patient, suggesting poor context tracking.
+
+Actionable improvements:
+["Resolve identity verification issues before proceeding — when the date of birth doesn't match, re-prompt or ask for additional identifying information rather than moving forward without confirmation", 'Avoid repetitive questioning — once the patient confirms they want to hear available options, present them without re-asking; streamline the call flow to reduce redundancy', 'Always close the loop with a confirmed appointment — do not end the call without either booking a specific date/time or scheduling a follow-up callback, and summarize the booking details for the patient']
